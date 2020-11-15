@@ -1,0 +1,16 @@
+{{define "gtag"}}
+<!-- <%
+  ganalytics_id = "UA-137169000-1"
+  if I18n.locale.to_s == "fr"
+    ganalytics_id = "UA-151423949-1"
+  end
+%> -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=<%=ganalytics_id%>"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '<%=ganalytics_id%>');
+</script>
+
+{{end}}

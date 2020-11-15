@@ -1,0 +1,61 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html lang="<%= I18n.locale.to_s %>">
+    <!-- <%
+    meta_description = yield :meta_description
+    title = yield :title
+    image = yield :image
+    if image == ''
+      image = localize_file("/images/logo_social.png")
+    end
+    image = request.base_url + image
+    canonical_url = url_for(:only_path => false, :protocol => 'https')
+  %> -->
+    <head>
+      <!-- <% if Rails.env.production? %>
+        <%= render "partials/gtag.html.erb" %>
+      <% end %> -->
+
+      <title>{{.Meta.Title}}</title>
+
+      <link rel="shortcut icon" href="/static/favicon.ico">
+      <link rel="canonical" href="{{ .Meta.CanonicalURL }}" />
+
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      {{if .Meta.Description }}
+      <meta name="description" content="{{ .Meta.Description }}">
+      {{end}}
+
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:site" content="@{{ .Constants.TwitterHandle }}" />
+      <meta name="twitter:creator" content="@{{ .Constants.TwitterHandle }}" />
+      <meta name="twitter:title" content="{{.Meta.Title}}" />
+      {{if .Meta.Description }}
+      <meta name="twitter:description" content="{{ .Meta.Description }}">
+      {{end}}
+      <meta name="twitter:image" content="<%= image %>" />
+
+      <meta property="og:url" content="{{ .Meta.CanonicalURL }}" />
+      <meta property="og:type" content="article" />
+      <meta property="og:title" content="{{.Meta.Title}}" />
+      {{if .Meta.Description }}
+      <meta property="og:description" content="{{ .Meta.Description }}">
+      {{end}}
+      <meta property="og:image" content="<%= image %>" />
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/css/uikit.min.css" />
+      <link rel="stylesheet" href="/static/css/main.css" />
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit-icons.min.js"></script>
+
+  </head>
+  <body>
+      {{template "header" .}}
+      <div class="site-content">
+        {{template "body" .}}
+      </div>
+      {{template "footer" .}}
+  </body>
+</html>
+{{end}}
