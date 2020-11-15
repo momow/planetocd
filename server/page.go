@@ -3,7 +3,6 @@ package server
 // Page ...
 type Page struct {
 	Lang      string
-	Body      []byte
 	Constants map[string]interface{}
 	Meta      *PageMeta
 }

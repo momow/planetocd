@@ -9,7 +9,6 @@ import (
 )
 
 var rootURL string
-
 var supportedLanguages = [...]string{"fr", "es", "zh"}
 
 // Listen ...
@@ -17,24 +16,22 @@ func Listen(domain string, port int) {
 	rootURL = domain
 
 	r := mux.NewRouter()
-
-	r.HandleFunc("/", languageChooseHandler)
-
 	var s *mux.Router
 
 	for _, lang := range supportedLanguages {
 		s = r.PathPrefix("/" + lang).Subrouter()
-		s.HandleFunc("/about", aboutHandler(lang))
-		s.HandleFunc("", homepageHandler(lang))
-		s.HandleFunc("/", homepageHandler(lang))
+		s.HandleFunc("/about", handleAbout(lang))
+		s.HandleFunc("", handleHomepage(lang))
+		s.HandleFunc("/", handleHomepage(lang))
 	}
 
+	r.HandleFunc("/", handleLanguageChooser)
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Fatal(http.ListenAndServe(fmt.Sprint(":", port), r))
 }
 
-func aboutHandler(lang string) func(w http.ResponseWriter, r *http.Request) {
+func handleAbout(lang string) func(w http.ResponseWriter, r *http.Request) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		p := getPage(lang)
 		RenderTemplate(w, "about", p)
@@ -42,7 +39,7 @@ func aboutHandler(lang string) func(w http.ResponseWriter, r *http.Request) {
 	return handler
 }
 
-func homepageHandler(lang string) func(w http.ResponseWriter, r *http.Request) {
+func handleHomepage(lang string) func(w http.ResponseWriter, r *http.Request) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
 		p := getPage(lang)
 		RenderTemplate(w, "articles", p)
@@ -50,7 +47,7 @@ func homepageHandler(lang string) func(w http.ResponseWriter, r *http.Request) {
 	return handler
 }
 
-func languageChooseHandler(w http.ResponseWriter, r *http.Request) {
+func handleLanguageChooser(w http.ResponseWriter, r *http.Request) {
 	p := getPage("")
 	RenderTemplate(w, "index_en", p)
 }
@@ -59,7 +56,6 @@ func getPage(lang string) *Page {
 	translate := func(str string) string { return Translate(lang, str) }
 	return &Page{
 		Lang:      lang,
-		Body:      []byte("hello"),
 		Constants: Constants,
 		Meta: &PageMeta{
 			Description:  "TODO",
