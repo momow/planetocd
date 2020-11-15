@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
-	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 var rootURL string
@@ -15,17 +15,49 @@ var supportedLanguages = [...]string{"fr", "es", "zh"}
 // Listen ...
 func Listen(domain string, port int) {
 	rootURL = domain
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(fmt.Sprint(":", port), nil))
+
+	r := mux.NewRouter()
+
+	r.HandleFunc("/", languageChooseHandler)
+
+	var s *mux.Router
+
+	for _, lang := range supportedLanguages {
+		s = r.PathPrefix("/" + lang).Subrouter()
+		s.HandleFunc("/about", aboutHandler(lang))
+		s.HandleFunc("", homepageHandler(lang))
+		s.HandleFunc("/", homepageHandler(lang))
+	}
+
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	log.Fatal(http.ListenAndServe(fmt.Sprint(":", port), r))
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	lang, path, err := extractLanguage(r.URL)
-	isLanguageChooser := err != nil
+func aboutHandler(lang string) func(w http.ResponseWriter, r *http.Request) {
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		p := getPage(lang)
+		RenderTemplate(w, "about", p)
+	}
+	return handler
+}
 
+func homepageHandler(lang string) func(w http.ResponseWriter, r *http.Request) {
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		p := getPage(lang)
+		RenderTemplate(w, "articles", p)
+	}
+	return handler
+}
+
+func languageChooseHandler(w http.ResponseWriter, r *http.Request) {
+	p := getPage("")
+	RenderTemplate(w, "index_en", p)
+}
+
+func getPage(lang string) *Page {
 	translate := func(str string) string { return Translate(lang, str) }
-	p := &Page{
+	return &Page{
 		Lang:      lang,
 		Body:      []byte("hello"),
 		Constants: Constants,
@@ -37,32 +69,4 @@ func handler(w http.ResponseWriter, r *http.Request) {
 			RootURL:      "/" + lang,
 		},
 	}
-	if isLanguageChooser {
-		RenderTemplate(w, "index_en", p)
-	} else if path == "about" {
-		RenderTemplate(w, "about", p)
-	} else {
-		RenderTemplate(w, "articles", p)
-	}
-}
-
-func extractLanguage(url *url.URL) (string, string, error) {
-	if url.Path == "" {
-		return "", "", fmt.Errorf("no lang")
-	}
-	parts := strings.SplitN(url.Path[1:], "/", 2)
-	if len(parts) == 0 {
-		return "", "", fmt.Errorf("no lang")
-	}
-	prefix := parts[0]
-	path := "/"
-	if len(parts) == 2 {
-		path = parts[1]
-	}
-	for _, lang := range supportedLanguages {
-		if prefix == lang {
-			return lang, path, nil
-		}
-	}
-	return "", path, fmt.Errorf("Unsupported language %v", prefix)
 }
