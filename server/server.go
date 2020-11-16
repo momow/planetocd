@@ -19,43 +19,54 @@ func Listen(scheme string, host string, port int) {
 		Host(host).
 		Subrouter()
 
-	router.Path("/").HandlerFunc(handleSimplePage("index_en")).Name("index_en")
+	router.Path("/").HandlerFunc(handleEnglishIndex).Name("index_en")
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	s := router.PathPrefix("/{language}").Subrouter()
-	s.HandleFunc("/about", handleSimplePage("about")).Name("about")
+	s.HandleFunc("/about", handleAbout).Name("about")
 	s.HandleFunc("", handleArticles)
 	s.HandleFunc("/", handleArticles).Name("articles")
 
 	log.Fatal(http.ListenAndServe(fmt.Sprint(":", port), router))
 }
 
+func handleEnglishIndex(w http.ResponseWriter, r *http.Request) {
+	canonicalURL, _ := router.Get("index_en").URL("language", getLang(r))
+	title := SiteName + " - Knowledge base about Obsessive Compulsive Disorder (OCD)"
+
+	p := getPage(r, canonicalURL, title, "")
+	RenderTemplate(w, "index_en", p)
+}
+
 func handleArticles(w http.ResponseWriter, r *http.Request) {
+	lang := getLang(r)
 	canonicalURL, _ := router.Get("articles").URL("language", getLang(r))
-	p := getPage(r, canonicalURL)
+	title := SiteName + " - " + Translate(lang, "Articles_about_OCD")
+	description := Translate(lang, "Home_meta")
+
+	p := getPage(r, canonicalURL, title, description)
 	RenderTemplate(w, "articles", p)
 }
 
-func handleSimplePage(template string) func(w http.ResponseWriter, r *http.Request) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		canonicalURL, _ := router.Get(template).URL("language", getLang(r))
-		p := getPage(r, canonicalURL)
-		RenderTemplate(w, template, p)
-	}
-	return handler
+func handleAbout(w http.ResponseWriter, r *http.Request) {
+	lang := getLang(r)
+	canonicalURL, _ := router.Get("about").URL("language", getLang(r))
+	title := Translate(lang, "About") + " - " + SiteName
+
+	p := getPage(r, canonicalURL, title, "")
+	RenderTemplate(w, "about", p)
 }
 
-func getPage(r *http.Request, canonicalURL *url.URL) *Page {
+func getPage(r *http.Request, canonicalURL *url.URL, title string, description string) *Page {
 	lang := getLang(r)
-	translate := func(str string) string { return Translate(lang, str) }
 
 	return &Page{
 		Lang:      lang,
 		Constants: Constants,
 		Meta: &PageMeta{
-			Description:  "TODO",
+			Title:        title,
+			Description:  description,
 			CanonicalURL: canonicalURL.String(),
-			Title:        SiteName + " - " + translate("Articles_about_OCD"), // TODO
 			RootURL:      getRootURL(lang).String(),
 		},
 	}
