@@ -31,18 +31,14 @@ func Listen(scheme string, host string, port int) {
 }
 
 func handleArticles(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	lang := vars["language"]
-	canonicalURL, _ := router.Get("articles").URL("language", lang)
+	canonicalURL, _ := router.Get("articles").URL("language", getLang(r))
 	p := getPage(r, canonicalURL)
 	RenderTemplate(w, "articles", p)
 }
 
 func handleSimplePage(template string) func(w http.ResponseWriter, r *http.Request) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		lang := vars["language"]
-		canonicalURL, _ := router.Get(template).URL("language", lang)
+		canonicalURL, _ := router.Get(template).URL("language", getLang(r))
 		p := getPage(r, canonicalURL)
 		RenderTemplate(w, template, p)
 	}
@@ -50,10 +46,7 @@ func handleSimplePage(template string) func(w http.ResponseWriter, r *http.Reque
 }
 
 func getPage(r *http.Request, canonicalURL *url.URL) *Page {
-	vars := mux.Vars(r)
-	lang := vars["language"]
-	// fmt.Println(router.Get("articles").URL("language", lang))
-	// fmt.Println(router.Get("about").URL("language", lang))
+	lang := getLang(r)
 	translate := func(str string) string { return Translate(lang, str) }
 	return &Page{
 		Lang:      lang,
@@ -66,4 +59,9 @@ func getPage(r *http.Request, canonicalURL *url.URL) *Page {
 			RootURL:      "/" + lang,
 		},
 	}
+}
+
+func getLang(r *http.Request) string {
+	vars := mux.Vars(r)
+	return vars["language"]
 }
