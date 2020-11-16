@@ -13,7 +13,6 @@ type PageMeta struct {
 	CanonicalURL string
 	Title        string
 	RootURL      string
-	URLPrefix    string
 }
 
 // T translates an input key using the Page's lang code

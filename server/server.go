@@ -48,17 +48,25 @@ func handleSimplePage(template string) func(w http.ResponseWriter, r *http.Reque
 func getPage(r *http.Request, canonicalURL *url.URL) *Page {
 	lang := getLang(r)
 	translate := func(str string) string { return Translate(lang, str) }
+
 	return &Page{
 		Lang:      lang,
 		Constants: Constants,
 		Meta: &PageMeta{
 			Description:  "TODO",
 			CanonicalURL: canonicalURL.String(),
-			Title:        SiteName + " - " + translate("Articles_about_OCD"),
-			URLPrefix:    lang + "/",
-			RootURL:      "/" + lang,
+			Title:        SiteName + " - " + translate("Articles_about_OCD"), // TODO
+			RootURL:      getRootURL(lang).String(),
 		},
 	}
+}
+
+func getRootURL(lang string) *url.URL {
+	rootURL, err := router.Get("articles").URL("language", lang)
+	if err != nil {
+		rootURL = &url.URL{}
+	}
+	return rootURL
 }
 
 func getLang(r *http.Request) string {
