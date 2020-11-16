@@ -10,18 +10,21 @@ import (
 
 func main() {
 	isLocal := isLocalEnvironment()
-	var domain string
+	var scheme string
+	var host string
 	var port int
 
 	if isLocal {
-		domain = fmt.Sprintf("http://localhost:%v", server.DefaultPort)
+		scheme = "http"
+		host = fmt.Sprintf("localhost:%v", server.DefaultPort)
 		port = server.DefaultPort
 	} else {
-		domain = "https://" + server.Domain
+		scheme = "https"
+		host = server.Domain
 		port = getPort()
 	}
 
-	server.Listen(domain, port)
+	server.Listen(scheme, host, port)
 }
 
 func isLocalEnvironment() bool {

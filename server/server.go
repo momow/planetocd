@@ -4,62 +4,63 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/gorilla/mux"
 )
 
-var rootURL string
 var supportedLanguages = [...]string{"fr", "es", "zh"}
+var router *mux.Router
 
 // Listen ...
-func Listen(domain string, port int) {
-	rootURL = domain
+func Listen(scheme string, host string, port int) {
+	router = mux.NewRouter().
+		Schemes(scheme).
+		Host(host).
+		Subrouter()
 
-	r := mux.NewRouter()
-	var s *mux.Router
+	router.Path("/").HandlerFunc(handleSimplePage("index_en")).Name("index_en")
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	for _, lang := range supportedLanguages {
-		s = r.PathPrefix("/" + lang).Subrouter()
-		s.HandleFunc("/about", handleAbout(lang))
-		s.HandleFunc("", handleHomepage(lang))
-		s.HandleFunc("/", handleHomepage(lang))
-	}
+	s := router.PathPrefix("/{language}").Subrouter()
+	s.HandleFunc("/about", handleSimplePage("about")).Name("about")
+	s.HandleFunc("", handleArticles)
+	s.HandleFunc("/", handleArticles).Name("articles")
 
-	r.HandleFunc("/", handleLanguageChooser)
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	log.Fatal(http.ListenAndServe(fmt.Sprint(":", port), r))
+	log.Fatal(http.ListenAndServe(fmt.Sprint(":", port), router))
 }
 
-func handleAbout(lang string) func(w http.ResponseWriter, r *http.Request) {
+func handleArticles(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	lang := vars["language"]
+	canonicalURL, _ := router.Get("articles").URL("language", lang)
+	p := getPage(r, canonicalURL)
+	RenderTemplate(w, "articles", p)
+}
+
+func handleSimplePage(template string) func(w http.ResponseWriter, r *http.Request) {
 	handler := func(w http.ResponseWriter, r *http.Request) {
-		p := getPage(lang)
-		RenderTemplate(w, "about", p)
+		vars := mux.Vars(r)
+		lang := vars["language"]
+		canonicalURL, _ := router.Get(template).URL("language", lang)
+		p := getPage(r, canonicalURL)
+		RenderTemplate(w, template, p)
 	}
 	return handler
 }
 
-func handleHomepage(lang string) func(w http.ResponseWriter, r *http.Request) {
-	handler := func(w http.ResponseWriter, r *http.Request) {
-		p := getPage(lang)
-		RenderTemplate(w, "articles", p)
-	}
-	return handler
-}
-
-func handleLanguageChooser(w http.ResponseWriter, r *http.Request) {
-	p := getPage("")
-	RenderTemplate(w, "index_en", p)
-}
-
-func getPage(lang string) *Page {
+func getPage(r *http.Request, canonicalURL *url.URL) *Page {
+	vars := mux.Vars(r)
+	lang := vars["language"]
+	// fmt.Println(router.Get("articles").URL("language", lang))
+	// fmt.Println(router.Get("about").URL("language", lang))
 	translate := func(str string) string { return Translate(lang, str) }
 	return &Page{
 		Lang:      lang,
 		Constants: Constants,
 		Meta: &PageMeta{
 			Description:  "TODO",
-			CanonicalURL: rootURL + "/" + lang + "/" + "TODO",
+			CanonicalURL: canonicalURL.String(),
 			Title:        SiteName + " - " + translate("Articles_about_OCD"),
 			URLPrefix:    lang + "/",
 			RootURL:      "/" + lang,
