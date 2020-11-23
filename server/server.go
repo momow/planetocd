@@ -30,7 +30,7 @@ func Listen(scheme string, host string, port int) {
 }
 
 func handleEnglishIndex(w http.ResponseWriter, r *http.Request) {
-	lang := inferLanguage(r)
+	lang := getLanguage(r)
 	if lang != "" {
 		url, err := router.Get("articles").URL("language", lang)
 		if err == nil {
