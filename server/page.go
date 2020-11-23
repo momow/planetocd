@@ -13,6 +13,7 @@ type PageMeta struct {
 	CanonicalURL string
 	Title        string
 	RootURL      string
+	SocialImage  string
 }
 
 // T translates an input key using the Page's lang code

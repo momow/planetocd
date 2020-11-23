@@ -1,15 +1,6 @@
 {{define "layout"}}
 <!DOCTYPE html>
 <html lang="<%= I18n.locale.to_s %>">
-    <!-- <%
-      TODO
-    image = yield :image
-    if image == ''
-      image = localize_file("/images/logo_social.png")
-    end
-    image = request.base_url + image
-    canonical_url = url_for(:only_path => false, :protocol => 'https')
-  %> -->
     <head>
       <!-- TODO <% if Rails.env.production? %>
         <%= render "partials/gtag.html.erb" %>
@@ -33,7 +24,7 @@
       {{if .Meta.Description }}
       <meta name="twitter:description" content="{{ .Meta.Description }}">
       {{end}}
-      <meta name="twitter:image" content="<%= image %>" />
+      <meta name="twitter:image" content="{{ .Meta.SocialImage }}" />
 
       <meta property="og:url" content="{{ .Meta.CanonicalURL }}" />
       <meta property="og:type" content="article" />
@@ -41,7 +32,7 @@
       {{if .Meta.Description }}
       <meta property="og:description" content="{{ .Meta.Description }}">
       {{end}}
-      <meta property="og:image" content="<%= image %>" />
+      <meta property="og:image" content="{{ .Meta.SocialImage }}" />
 
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/css/uikit.min.css" />
       <link rel="stylesheet" href="/static/css/main.css" />
