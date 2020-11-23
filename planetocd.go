@@ -24,7 +24,7 @@ func main() {
 		port = getPort()
 	}
 
-	server.Listen(scheme, host, port)
+	server.Listen(scheme, host, port, isLocal)
 }
 
 func isLocalEnvironment() bool {

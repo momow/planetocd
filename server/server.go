@@ -10,9 +10,12 @@ import (
 )
 
 var router *mux.Router
+var isLocalEnvironment bool
 
 // Listen ...
-func Listen(scheme string, host string, port int) {
+func Listen(scheme string, host string, port int, isLocal bool) {
+	isLocalEnvironment = isLocal
+
 	router = mux.NewRouter().
 		Schemes(scheme).
 		Host(host).
@@ -97,14 +100,15 @@ func getPage(w http.ResponseWriter, r *http.Request, canonicalURL *url.URL, titl
 	}
 
 	return &Page{
-		Lang:      lang,
 		Constants: Constants,
 		Meta: &PageMeta{
-			Title:        title,
-			Description:  description,
-			CanonicalURL: canonicalURL.String(),
-			RootURL:      getRootURL(lang).String(),
-			SocialImage:  imageURL.String() + "images/logo_social.png", // TODO: article image
+			Lang:                  lang,
+			Title:                 title,
+			Description:           description,
+			CanonicalURL:          canonicalURL.String(),
+			RootURL:               getRootURL(lang).String(),
+			SocialImage:           imageURL.String() + "images/logo_social.png", // TODO: article image
+			EnableGoogleAnalytics: !isLocalEnvironment,
 		},
 	}, nil
 }

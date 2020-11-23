@@ -1,10 +1,10 @@
 {{define "layout"}}
 <!DOCTYPE html>
-<html lang="<%= I18n.locale.to_s %>">
+<html {{if .Meta.Lang }}lang="{{ .Meta.Lang }}"{{end}}>
     <head>
-      <!-- TODO <% if Rails.env.production? %>
-        <%= render "partials/gtag.html.erb" %>
-      <% end %> -->
+      {{if .Meta.EnableGoogleAnalytics }}
+      {{template "gtag" .}}
+      {{end}}
 
       <title>{{.Meta.Title}}</title>
 
