@@ -9,7 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var supportedLanguages = [...]string{"fr", "es", "zh"}
 var router *mux.Router
 
 // Listen ...
@@ -31,6 +30,15 @@ func Listen(scheme string, host string, port int) {
 }
 
 func handleEnglishIndex(w http.ResponseWriter, r *http.Request) {
+	lang := inferLanguage(r)
+	if lang != "" {
+		url, err := router.Get("articles").URL("language", lang)
+		if err == nil {
+			http.Redirect(w, r, url.String(), http.StatusTemporaryRedirect)
+		} else {
+			fmt.Printf("Error getting URL: %v\n", err)
+		}
+	}
 	canonicalURL, _ := router.Get("index_en").URL("language", getLang(r))
 	title := SiteName + " - Knowledge base about Obsessive Compulsive Disorder (OCD)"
 

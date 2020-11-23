@@ -7,5 +7,6 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/githubnemo/CompileDaemon v1.2.1 // indirect
 	github.com/gorilla/mux v1.8.0
+	golang.org/x/text v0.3.4
 	gopkg.in/yaml.v2 v2.3.0
 )
