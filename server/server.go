@@ -29,79 +29,55 @@ func Listen(scheme string, host string, port int, isLocal bool) {
 	s.HandleFunc("", handleArticles)
 	s.HandleFunc("/", handleArticles).Name("articles")
 
+	// http.Error(w, "An internal error occurred", http.StatusInternalServerError)
+
 	log.Fatal(http.ListenAndServe(fmt.Sprint(":", port), router))
 }
 
 func handleEnglishIndex(w http.ResponseWriter, r *http.Request) {
 	lang := getLanguage(r)
 	if lang != "" {
-		url, err := router.Get("articles").URL("language", getLang(r))
-		if err != nil {
-			internalServerError(w, r, err)
-			return
-		}
+		url := mustGetURL("articles", lang)
 		http.Redirect(w, r, url.String(), http.StatusTemporaryRedirect)
 	}
-	canonicalURL, err := router.Get("index_en").URL("language", getLang(r))
-	if err != nil {
-		internalServerError(w, r, err)
-		return
-	}
+	canonicalURL := mustGetURL("index_en", "")
 
 	title := SiteName + " - Knowledge base about Obsessive Compulsive Disorder (OCD)"
 
-	p, err := getPage(w, r, canonicalURL, title, "")
-	if err != nil {
-		return
-	}
+	p := getPage(w, r, canonicalURL, title, "")
 	RenderTemplate(w, "index_en", p)
 }
 
 func handleArticles(w http.ResponseWriter, r *http.Request) {
 	lang := getLang(r)
-	canonicalURL, err := router.Get("articles").URL("language", getLang(r))
-	if err != nil {
-		internalServerError(w, r, err)
-		return
-	}
+	canonicalURL := mustGetURL("articles", lang)
 
 	title := SiteName + " - " + Translate(lang, "Articles_about_OCD")
 	description := Translate(lang, "Home_meta")
 
-	p, err := getPage(w, r, canonicalURL, title, description)
-	if err != nil {
-		return
-	}
+	p := getPage(w, r, canonicalURL, title, description)
 	RenderTemplate(w, "articles", p)
 }
 
 func handleAbout(w http.ResponseWriter, r *http.Request) {
 	lang := getLang(r)
-	canonicalURL, err := router.Get("about").URL("language", getLang(r))
-	if err != nil {
-		internalServerError(w, r, err)
-		return
-	}
+	canonicalURL := mustGetURL("about", lang)
 	title := Translate(lang, "About") + " - " + SiteName
 
-	p, err := getPage(w, r, canonicalURL, title, "")
-	if err != nil {
-		internalServerError(w, r, err)
-		return
-	}
+	p := getPage(w, r, canonicalURL, title, "")
 	RenderTemplate(w, "about", p)
 }
 
-func getPage(w http.ResponseWriter, r *http.Request, canonicalURL *url.URL, title string, description string) (*Page, error) {
+func getPage(w http.ResponseWriter, r *http.Request, canonicalURL *url.URL, title string, description string) *page {
 	lang := getLang(r)
 	imageURL, err := router.Get("static").URL()
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
-	return &Page{
+	return &page{
 		Constants: Constants,
-		Meta: &PageMeta{
+		Meta: &pageMeta{
 			Lang:                  lang,
 			Title:                 title,
 			Description:           description,
@@ -110,20 +86,7 @@ func getPage(w http.ResponseWriter, r *http.Request, canonicalURL *url.URL, titl
 			SocialImage:           imageURL.String() + "images/logo_social.png", // TODO: article image
 			EnableGoogleAnalytics: !isLocalEnvironment,
 		},
-	}, nil
-}
-
-func internalServerError(w http.ResponseWriter, r *http.Request, err error) {
-	fmt.Printf("ERROR serving %v: %v\n", r.URL, err)
-	http.Error(w, "An internal error occurred", http.StatusInternalServerError)
-}
-
-func getRootURL(lang string) *url.URL {
-	rootURL, err := router.Get("articles").URL("language", lang)
-	if err != nil {
-		rootURL = &url.URL{}
 	}
-	return rootURL
 }
 
 func getLang(r *http.Request) string {

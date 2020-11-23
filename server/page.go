@@ -1,13 +1,13 @@
 package server
 
-// Page ...
-type Page struct {
+import "net/url"
+
+type page struct {
 	Constants map[string]interface{}
-	Meta      *PageMeta
+	Meta      *pageMeta
 }
 
-// PageMeta ...
-type PageMeta struct {
+type pageMeta struct {
 	Lang                  string
 	Description           string
 	CanonicalURL          string
@@ -18,11 +18,16 @@ type PageMeta struct {
 }
 
 // T translates an input key using the Page's lang code
-func (p *Page) T(key string) string {
+func (p *page) T(key string) string {
 	return Translate(p.Meta.Lang, key)
 }
 
 // URL adds the language prefix to an URL path
-func (p *Page) URL(path string) string {
+func (p *page) URL(path string) string {
 	return "/" + p.Meta.Lang + path
+}
+
+// MustGetURL returns the URL for a name, and panics if not found
+func (p *page) MustGetURL(name string) *url.URL {
+	return mustGetURL(name, p.Meta.Lang)
 }

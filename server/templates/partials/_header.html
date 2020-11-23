@@ -9,9 +9,9 @@
             </div>
             <div class="uk-navbar-center">
                 <ul class="uk-navbar-nav uk-visible@s">
+                    <li><a href="{{ .MustGetURL "articles" }}">{{ .T "Articles" }}</a></li>
+                    <li><a href="{{ .MustGetURL "about" }}">{{ .T "About" }}</a></li>
                     <!-- <li class="uk-active"><a aria-current="page" href="/"><span class="translation_missing" title="translation missing: fr.Articles">Articles</span></a></li> -->
-                    <li><a href="{{ .URL "/" }}">{{ .T "Articles" }}</a></li>
-                    <li><a href="{{ .URL "/about" }}">{{ .T "About" }}</a></li>
                 </ul>
             </div>
             <div class="uk-navbar-right">
@@ -26,8 +26,8 @@
                 </div>
                 <div uk-dropdown>
                     <ul class="uk-nav uk-dropdown-nav">
-                        <li class="uk-active"><%= link_to t('Home'), root_path %></li>
-                        <li class="uk-active"><%= link_to t('About'), about_url %></li>
+                        <li><a href="{{ .MustGetURL "articles" }}">{{ .T "Articles" }}</a></li>
+                        <li><a href="{{ .MustGetURL "about" }}">{{ .T "About" }}</a></li>
                         <li class="uk-active uk-margin-top uk-child-width-expand uk-text-center" uk-grid>
                             <div><a href="{{ .Constants.FacebookURL }}" class="uk-icon" uk-icon="facebook"></a></div>
                             <div><a href="{{ .Constants.TwitterURL }}" class="uk-icon" uk-icon="twitter"></a></div>

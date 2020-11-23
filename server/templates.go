@@ -10,7 +10,7 @@ import (
 var templates = loadTemplates()
 
 // RenderTemplate ...
-func RenderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, p *page) {
 	err := templates[tmpl].ExecuteTemplate(w, "layout", p)
 	if err != nil {
 		fmt.Printf("Error serving page %v\n", err)
