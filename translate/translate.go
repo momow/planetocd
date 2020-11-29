@@ -30,7 +30,7 @@ func HTMLToMarkdown() {
 }
 
 // CreateTranslatedArticle ....
-func CreateTranslatedArticle(id string, originalURL string, originalTitle string, originalAuthor string) {
+func CreateTranslatedArticle(id string, originalURL string, originalAuthor string, originalTitle string) {
 	inputFileMD := "./translate/_input.md"
 	inputFileHTML := "./translate/_input.html"
 	inputMD, _ := ioutil.ReadFile(inputFileMD)
