@@ -15,6 +15,7 @@ type pageMeta struct {
 	RootURL               string
 	SocialImage           string
 	EnableGoogleAnalytics bool
+	DisableHeaderLinks    bool
 }
 
 // T translates an input key using the Page's lang code

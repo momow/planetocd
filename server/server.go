@@ -45,6 +45,7 @@ func handleEnglishIndex(w http.ResponseWriter, r *http.Request) {
 	title := SiteName + " - Knowledge base about Obsessive Compulsive Disorder (OCD)"
 
 	p := getPage(w, r, canonicalURL, title, "")
+	p.Meta.DisableHeaderLinks = true
 	RenderTemplate(w, "index_en", p)
 }
 

@@ -3,10 +3,15 @@
     <div class="uk-container uk-container-expand">
         <nav class="uk-navbar layout-width">
             <div class="uk-navbar-left">
+                {{ if .Meta.DisableHeaderLinks }}
+                <a class="uk-navbar-item uk-logo" href="/">
+                {{ else }}
                 <a class="uk-navbar-item uk-logo" href="{{ .Meta.RootURL }}">
+                {{ end }}
                     <img class="uk-margin-small-right" src="/static/images/logo.svg" width="90" title="{{ .Constants.SiteName }}" alt="{{ .Constants.SiteName }}">
                 </a>
             </div>
+            {{ if not .Meta.DisableHeaderLinks }}
             <div class="uk-navbar-center">
                 <ul class="uk-navbar-nav uk-visible@s">
                     <li><a href="{{ .MustGetURL "articles" }}">{{ .T "Articles" }}</a></li>
@@ -36,6 +41,7 @@
                     </ul>
                 </div>
             </div>
+            {{ end }}
         </nav>
     </div>
 </header>
