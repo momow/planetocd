@@ -6,7 +6,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-var supportedLanguages [3]string
+var SupportedLanguages [3]string
 var langBaseToLang map[language.Base]string
 var languageMatcher language.Matcher
 
@@ -15,7 +15,7 @@ func init() {
 	esBase, _ := language.Spanish.Base()
 	zhBase, _ := language.Chinese.Base()
 
-	supportedLanguages = [3]string{
+	SupportedLanguages = [3]string{
 		"fr",
 		"es",
 		"zh",

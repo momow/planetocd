@@ -29,7 +29,7 @@ func loadTranslations(lang string) map[string]string {
 }
 
 func init() {
-	translations["fr"] = loadTranslations("fr")
-	translations["es"] = loadTranslations("es")
-	translations["zh"] = loadTranslations("zh")
+	for _, lang := range SupportedLanguages {
+		translations[lang] = loadTranslations(lang)
+	}
 }
