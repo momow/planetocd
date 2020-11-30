@@ -1,5 +1,13 @@
 package articles
 
+// Article ...
+type Article struct {
+	Lang     string
+	Title    string
+	HTML     string
+	Markdown string
+}
+
 // ArticleMetadata ...
 type ArticleMetadata struct {
 	OriginalURL    string                             `json:"originalUrl"`

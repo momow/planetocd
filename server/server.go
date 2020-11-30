@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/aureliengasser/planetocd/articles"
 	"github.com/gorilla/mux"
 )
 
@@ -57,6 +58,10 @@ func handleArticles(w http.ResponseWriter, r *http.Request) {
 	description := Translate(lang, "Home_meta")
 
 	p := getPage(w, r, canonicalURL, title, description)
+	articles := articles.ListArticles("fr")
+	for i, j := range articles {
+		fmt.Printf("%v %v\n", i, j.Title)
+	}
 	RenderTemplate(w, "articles", p)
 }
 
