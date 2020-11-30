@@ -41,7 +41,7 @@ func CreateTranslatedArticle(id string, originalURL string, originalAuthor strin
 		OriginalURL:    originalURL,
 		OriginalTitle:  originalTitle,
 		OriginalAuthor: originalAuthor,
-		Title:          "",
+		Languages:      make(map[string]articles.ArticleLanguageMetadata),
 	}
 
 	for _, lang := range server.SupportedLanguages {
@@ -56,12 +56,18 @@ func CreateTranslatedArticle(id string, originalURL string, originalAuthor strin
 			log.Fatal(err)
 		}
 		ioutil.WriteFile("./articles/articles/"+id+"_"+lang+".md", []byte(markdown), 0644)
-		metadataJSON, err := json.MarshalIndent(&metadata, "", "    ")
-		if err != nil {
-			log.Fatal(err)
+
+		metadata.Languages[lang] = articles.ArticleLanguageMetadata{
+			Title: "",
 		}
-		ioutil.WriteFile("./articles/articles/"+id+"_"+lang+".json", metadataJSON, 0644)
 	}
+
+	metadataJSON, err := json.MarshalIndent(&metadata, "", "    ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	slug := server.Slugify(originalTitle)
+	ioutil.WriteFile("./articles/articles/"+id+"__"+slug+".json", metadataJSON, 0644)
 
 	copyFile(inputFileMD, "./articles/articles/"+id+"__original.md")
 	copyFile(inputFileHTML, "./articles/articles/"+id+"__original.html")
