@@ -45,18 +45,7 @@ func CreateTranslatedArticle(id string, originalURL string, originalAuthor strin
 	}
 
 	for _, lang := range server.SupportedLanguages {
-		translatedHTML, err := translateText(os.Stdout, "planetocd", "en", lang, string(html), "text/html", "default")
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		converter := md.NewConverter("", true, nil)
-		markdown, err := converter.ConvertString(translatedHTML)
-		if err != nil {
-			log.Fatal(err)
-		}
-		ioutil.WriteFile("./articles/articles/"+id+"_"+lang+".md", []byte(markdown), 0644)
-
+		translateAndWrite(lang, string(html), id)
 		metadata.Languages[lang] = articles.ArticleLanguageMetadata{
 			Title: "",
 		}
@@ -71,6 +60,20 @@ func CreateTranslatedArticle(id string, originalURL string, originalAuthor strin
 
 	copyFile(inputFileMD, "./articles/articles/"+id+"__original.md")
 	copyFile(inputFileHTML, "./articles/articles/"+id+"__original.html")
+}
+
+func translateAndWrite(lang string, html string, id string) {
+	translatedHTML, err := translateText(os.Stdout, "planetocd", "en", lang, html, "text/html", "default")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	converter := md.NewConverter("", true, nil)
+	markdown, err := converter.ConvertString(translatedHTML)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ioutil.WriteFile("./articles/articles/"+id+"_"+lang+".md", []byte(markdown), 0644)
 }
 
 func copyFile(src string, dest string) {
