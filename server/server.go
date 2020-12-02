@@ -58,7 +58,7 @@ func handleArticles(w http.ResponseWriter, r *http.Request) {
 	description := Translate(lang, "Home_meta")
 
 	p := getPage(w, r, canonicalURL, title, description)
-	all := articles.ListArticles("fr")
+	all := articles.ListArticles(lang)
 	summaries := make([]articleSummary, len(all))
 	i := 0
 	for articleID, j := range all {
