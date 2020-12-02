@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+
+	"github.com/gomarkdown/markdown"
 )
 
 var articles = make(map[string]map[int]*Article)
@@ -86,13 +88,32 @@ func loadArticle(metadataFile string) {
 
 func loadArticleInLang(id string, lang string, langMetadata ArticleLanguageMetadata) (*Article, error) {
 	filePath := articlesRootPath + id + "_" + lang + ".md"
-	md, err := ioutil.ReadFile(filePath)
+	mdBytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("Cannot read file %v: %v", filePath, err)
 	}
+
+	HTMLBytes := markdown.ToHTML(mdBytes, nil, nil)
+	HTML := string(HTMLBytes)
+	HTMLShort := getHTMLShort(HTML)
+
 	return &Article{
-		Lang:     lang,
-		Markdown: string(md),
-		Title:    langMetadata.Title,
+		Lang:      lang,
+		Markdown:  string(mdBytes),
+		HTML:      HTML,
+		HTMLShort: HTMLShort,
+		Title:     langMetadata.Title,
 	}, nil
+}
+
+func getHTMLShort(HTML string) string {
+	endTag := "</p>"
+	length := len(HTML)
+	i := 500
+	for ; i+len(endTag) < length; i++ {
+		if HTML[i:i+len(endTag)] == endTag {
+			break
+		}
+	}
+	return HTML[:i+len(endTag)]
 }

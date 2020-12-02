@@ -4,25 +4,20 @@
 <% content_for :meta_description, (t :Home_meta) %> -->
 
 <h1>{{ .T "Recent_articles" }}</h1>
-<!-- <%
-    articles = Rails.application.articles[I18n.locale.to_s].values
-        .reject{ |a| !a.published }
-        .sort_by{ |a| -a.id }
-%> -->
 <section class="articles-list">
-    <% articles.each do |article| %>
+    {{ range .Body }}
         <article class="uk-card uk-card-default uk-margin-bottom">
             <div class="uk-card-body">
-                <a class="uk-link-heading" href="<%= article_url(article) %>">
-                    <h3 class="uk-card-title"><%= article.title %></h3>
+                <a class="uk-link-heading" href="{{ .URL }}">
+                    <h3 class="uk-card-title">{{ .Title }}</h3>
                 </a>
-                <%= article.content_html_short %>
+                {{ .HTMLShort }}
             </div>
             <div class="uk-card-footer">
-                <a href="<%= article_url(article) %>" class="uk-button uk-button-text">{{ .T "Read_more" }}</a>
+                <a href="{{ .URL }}" class="uk-button uk-button-text">{{ $.T "Read_more" }}</a>
             </div>
         </article>
-    <% end %>
+    {{ end }}
 </section>
 
 {{end}}

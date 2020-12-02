@@ -4,6 +4,7 @@ import "net/url"
 
 type page struct {
 	Constants map[string]interface{}
+	Body      interface{}
 	Meta      *pageMeta
 }
 

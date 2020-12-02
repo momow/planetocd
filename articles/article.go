@@ -2,10 +2,11 @@ package articles
 
 // Article ...
 type Article struct {
-	Lang     string
-	Title    string
-	HTML     string
-	Markdown string
+	Lang      string
+	Title     string
+	HTML      string
+	HTMLShort string
+	Markdown  string
 }
 
 // ArticleMetadata ...

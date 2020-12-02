@@ -58,10 +58,18 @@ func handleArticles(w http.ResponseWriter, r *http.Request) {
 	description := Translate(lang, "Home_meta")
 
 	p := getPage(w, r, canonicalURL, title, description)
-	articles := articles.ListArticles("fr")
-	for i, j := range articles {
-		fmt.Printf("%v %v\n", i, j.Title)
+	all := articles.ListArticles("fr")
+	summaries := make([]articleSummary, len(all))
+	i := 0
+	for articleID, j := range all {
+		summaries[i] = articleSummary{
+			Title:     j.Title,
+			HTMLShort: j.HTMLShort,
+			URL:       "" + string(articleID),
+		}
+		i++
 	}
+	p.Body = summaries
 	RenderTemplate(w, "articles", p)
 }
 
