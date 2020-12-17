@@ -25,9 +25,11 @@ func main() {
 			switch action {
 			case "server":
 				startServer()
+			case "convert":
+				convert()
 			case "translate":
 				// GOOGLE_APPLICATION_CREDENTIALS=~/.local/planetocd-86fb09efe9c9.json
-				doTranslate("0004")
+				doTranslate()
 			default:
 				log.Fatalf("Unknown action %v", action)
 			}
@@ -59,8 +61,16 @@ func startServer() {
 	server.Listen(scheme, host, port, isLocal)
 }
 
-func doTranslate(id string) {
-	translate.CreateTranslatedArticle(id, "https://ocdla.com/bodydysmorphicdisorder", "", "Body Dysmorphic Disorder (BDD) – Symptoms and Treatment")
+func convert() {
+	translate.HTMLToMarkdown()
+}
+
+func doTranslate() {
+	translate.CreateTranslatedArticle(
+		"0003",
+		"https://www.madeofmillions.com/articles/12-signs-that-you-might-have-sexual-orientation-ocd",
+		"Dr. Jan Weiner",
+		"12 Signs That You Might Have Sexual Orientation OCD")
 }
 
 func isLocalEnvironment() bool {

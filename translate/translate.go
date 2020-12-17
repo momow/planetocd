@@ -46,8 +46,12 @@ func CreateTranslatedArticle(id string, originalURL string, originalAuthor strin
 
 	for _, lang := range server.SupportedLanguages {
 		translateAndWrite(lang, string(html), id)
+		translatedTitle, err := translateText(os.Stdout, "planetocd", "en", lang, originalTitle, "text/plain", "default")
+		if err != nil {
+			log.Fatal(err)
+		}
 		metadata.Languages[lang] = articles.ArticleLanguageMetadata{
-			Title: "",
+			Title: translatedTitle,
 		}
 	}
 

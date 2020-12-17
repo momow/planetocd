@@ -14,7 +14,7 @@
         {{- if .OriginalAuthor }}
         by <em>{{ .OriginalAuthor }}</em>
         {{- end }}
-        on <a href="{{ .OriginalURL }}" target="_blank">{{ .OriginalURL }}</a>
+        <!-- on <a href="{{ .OriginalURL }}" target="_blank">{{ .OriginalURL }}</a> -->
     </p>
 
     <section>{{ .HTML }}</section>
@@ -37,7 +37,7 @@
     </section>
 
     <section class="uk-margin-top uk-grid-small uk-child-width-auto">
-        <a href="#top" class="uk-button uk-button-text">&#8963;{{ $.T "Back_to_top" }}</a>
+        <a href="#" onclick="window.scrollTo(0, 0)" class="uk-button uk-button-text">&#8963;{{ $.T "Back_to_top" }}</a>
         <!-- <%= link_to(likes_path(article_id: article.id, language: I18n.locale.to_s), class: 'uk-button uk-button-text', method: :post, remote: true) do %>
           <span id="likes-counter"><%= article_likes_count(article.likes_count) %></span>
           <%= t(:this_article_helped_me) %>
