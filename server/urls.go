@@ -3,6 +3,7 @@ package server
 import (
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/mozillazg/go-unidecode"
@@ -23,6 +24,17 @@ func Slugify(s string) string {
 
 func mustGetURL(name string, lang string) *url.URL {
 	res, err := router.Get(name).URL("language", lang)
+	if err != nil {
+		panic(err)
+	}
+	return res
+}
+
+func mustGetArticleURL(article *article) *url.URL {
+	res, err := router.Get("article").URL(
+		"language", article.Lang,
+		"id", strconv.Itoa(article.ID),
+		"slug", article.Slug)
 	if err != nil {
 		panic(err)
 	}

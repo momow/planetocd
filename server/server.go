@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 
-	"github.com/aureliengasser/planetocd/articles"
 	"github.com/gorilla/mux"
 )
 
@@ -29,6 +29,7 @@ func Listen(scheme string, host string, port int, isLocal bool) {
 	s.HandleFunc("/about", handleAbout).Name("about")
 	s.HandleFunc("", handleArticles)
 	s.HandleFunc("/", handleArticles).Name("articles")
+	s.HandleFunc("/articles/{id:[0-9]+}/{slug}", handleArticle).Name("article")
 
 	// http.Error(w, "An internal error occurred", http.StatusInternalServerError)
 
@@ -36,11 +37,11 @@ func Listen(scheme string, host string, port int, isLocal bool) {
 }
 
 func handleEnglishIndex(w http.ResponseWriter, r *http.Request) {
-	lang := getLanguage(r)
-	if lang != "" {
-		url := mustGetURL("articles", lang)
-		http.Redirect(w, r, url.String(), http.StatusTemporaryRedirect)
-	}
+	// lang := getLanguage(r)
+	// if lang != "" {
+	// 	url := mustGetURL("articles", lang)
+	// 	http.Redirect(w, r, url.String(), http.StatusTemporaryRedirect)
+	// }
 	canonicalURL := mustGetURL("index_en", "")
 
 	title := SiteName + " - Knowledge base about Obsessive Compulsive Disorder (OCD)"
@@ -58,19 +59,44 @@ func handleArticles(w http.ResponseWriter, r *http.Request) {
 	description := Translate(lang, "Home_meta")
 
 	p := getPage(w, r, canonicalURL, title, description)
-	all := articles.ListArticles(lang)
+	all, err := getArticles(lang)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
 	summaries := make([]articleSummary, len(all))
 	i := 0
-	for articleID, j := range all {
+	for _, article := range all {
 		summaries[i] = articleSummary{
-			Title:     j.Title,
-			HTMLShort: j.HTMLShort,
-			URL:       "" + string(articleID),
+			Title:     article.Title,
+			HTMLShort: article.HTMLShort,
+			URL:       mustGetArticleURL(article),
 		}
 		i++
 	}
 	p.Body = summaries
 	RenderTemplate(w, "articles", p)
+}
+
+func handleArticle(w http.ResponseWriter, r *http.Request) {
+	lang := getLang(r)
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	canonicalURL := mustGetURL("articles", lang)
+	article, err := getArticle(lang, id)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	title := article.Title
+	description := ""
+	p := getPage(w, r, canonicalURL, title, description)
+	p.Body = article
+	RenderTemplate(w, "article", p)
 }
 
 func handleAbout(w http.ResponseWriter, r *http.Request) {

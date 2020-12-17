@@ -1,0 +1,53 @@
+{{define "body"}}
+
+{{ $article := .Body }}
+
+<a id="top" class="uk-button uk-button-text" href="{{ .MustGetURL "articles" }}">&#171; {{ .T "All_articles" }}</a>
+
+{{ with $article}}
+
+<article class="uk-article article">
+    <h1 class="uk-article-title">{{ .Title }}</h1>
+    <p class="uk-article-meta">
+        <label>{{ $.T "Original article" }}: </label>
+        <a href="{{ .OriginalURL }}" target="_blank">{{ .OriginalTitle }}</a>
+        {{- if .OriginalAuthor }}
+        by <em>{{ .OriginalAuthor }}</em>
+        {{- end }}
+        on <a href="{{ .OriginalURL }}" target="_blank">{{ .OriginalURL }}</a>
+    </p>
+
+    <section>{{ .HTML }}</section>
+
+    <section style="text-align: right">
+        <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ $.Meta.CanonicalURL }}&layout=button&size=large&width=73&height=28"
+                width="73" height="28" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media">
+        </iframe>
+        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw"
+           class="twitter-share-button"
+           data-size="large"
+           data-text="{{ .Title }}"
+           data-url="{{ .URL }}"
+           data-via="{{ $.Constants.TwitterHandle }}"
+           data-lang="{{ .Lang }}"
+           data-dnt="true"
+           data-show-count="false">
+         </a>
+         <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    </section>
+
+    <section class="uk-margin-top uk-grid-small uk-child-width-auto">
+        <a href="#top" class="uk-button uk-button-text">&#8963;{{ $.T "Back_to_top" }}</a>
+        <!-- <%= link_to(likes_path(article_id: article.id, language: I18n.locale.to_s), class: 'uk-button uk-button-text', method: :post, remote: true) do %>
+          <span id="likes-counter"><%= article_likes_count(article.likes_count) %></span>
+          <%= t(:this_article_helped_me) %>
+        <% end %> -->
+        <a class="uk-button uk-button-text uk-align-right" href="{{ $.MustGetURL "articles" }}">&#171; {{ $.T "All_articles" }}</a>
+    </section>
+
+</article>
+
+{{end}}
+{{end}}
+
+

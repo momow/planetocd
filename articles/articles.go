@@ -17,16 +17,10 @@ var articlesRootPath = "articles/articles/"
 var regexTranslationFile = regexp.MustCompile(`_([a-z]{2}).md$`)
 var regexMetadataFile = regexp.MustCompile(`.*/([0-9]+)_[^/]+.json$`)
 
-// GetArticle ...
-func GetArticle(lang string, id int) *Article {
+// GetArticles ...
+func GetArticles() map[string]map[int]*Article {
 	ensureLoaded()
-	return articles[lang][id]
-}
-
-// ListArticles ...
-func ListArticles(lang string) map[int]*Article {
-	ensureLoaded()
-	return articles[lang]
+	return articles
 }
 
 func ensureLoaded() {
@@ -73,7 +67,7 @@ func loadArticle(metadataFile string) {
 		if len(lang) != 2 {
 			log.Panic("Error parsing file name " + langFile)
 		}
-		article, err := loadArticleInLang(id, lang, metadata.Languages[lang])
+		article, err := loadArticleInLang(id, idN, lang, metadata)
 		if err != nil {
 			fmt.Println(err)
 			continue
@@ -86,7 +80,8 @@ func loadArticle(metadataFile string) {
 	}
 }
 
-func loadArticleInLang(id string, lang string, langMetadata ArticleLanguageMetadata) (*Article, error) {
+func loadArticleInLang(id string, idN int, lang string, metadata ArticleMetadata) (*Article, error) {
+	langMetadata := metadata.Languages[lang]
 	filePath := articlesRootPath + id + "_" + lang + ".md"
 	mdBytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -98,11 +93,15 @@ func loadArticleInLang(id string, lang string, langMetadata ArticleLanguageMetad
 	HTMLShort := getHTMLShort(HTML)
 
 	return &Article{
-		Lang:      lang,
-		Markdown:  string(mdBytes),
-		HTML:      HTML,
-		HTMLShort: HTMLShort,
-		Title:     langMetadata.Title,
+		ID:             idN,
+		Lang:           lang,
+		Markdown:       string(mdBytes),
+		HTML:           HTML,
+		HTMLShort:      HTMLShort,
+		Title:          langMetadata.Title,
+		OriginalURL:    metadata.OriginalURL,
+		OriginalTitle:  metadata.OriginalTitle,
+		OriginalAuthor: metadata.OriginalAuthor,
 	}, nil
 }
 

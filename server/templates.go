@@ -2,9 +2,9 @@ package server
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"path"
-	"text/template"
 )
 
 var templates = loadTemplates()
@@ -21,6 +21,7 @@ func loadTemplates() map[string]*template.Template {
 	templates := make(map[string]*template.Template)
 	templates["index_en"] = loadTemplate("index_en.html")
 	templates["articles"] = loadTemplate("articles.html")
+	templates["article"] = loadTemplate("article.html")
 	templates["about"] = loadTemplate("about.html")
 	return templates
 }
