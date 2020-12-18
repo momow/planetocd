@@ -10,7 +10,7 @@
     <h1 class="uk-article-title">{{ .Title }}</h1>
     <p class="uk-article-meta">
         <label>{{ $.T "Original article" }}: </label>
-        <a href="{{ .OriginalURL }}" target="_blank">{{ .OriginalTitle }}</a>
+        <a href="{{ .OriginalURL }}" target="_blank" class="external">{{ .OriginalTitle }}</a>
         {{- if .OriginalAuthor }}
         by <em>{{ .OriginalAuthor }}</em>
         {{- end }}

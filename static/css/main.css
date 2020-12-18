@@ -14,18 +14,6 @@ em {
 	text-decoration: underline
 }
 
-a[target=_blank]:after {
-	background-image: url(/static/images/ext-link.svg);
-	background-size: 12px 12px;
-	display: inline-block;
-	width: 12px;
-	height: 12px;
-	position: relative;
-	content: "";
-	top: 3px;
-	margin-left: 1px
-}
-
 .layout-width {
 	margin: 0 auto;
 	max-width: 1605px
@@ -89,18 +77,6 @@ a[target=_blank]:after {
 
 .articles-list {
 	margin-bottom: 1em
-}
-
-a[target=_blank]:after {
-	background-image: url(/static/images/ext-link.svg);
-	background-size: 12px 12px;
-	display: inline-block;
-	width: 12px;
-	height: 12px;
-	position: relative;
-	content: "";
-	top: 3px;
-	margin-left: 1px
 }
 
 .layout-width {
@@ -164,3 +140,16 @@ ul.index-languages li {
 ul.index-languages img {
     width: 100px
 }
+
+a[target=_blank].external:after {
+	background-image: url(/static/images/ext-link.svg);
+	background-size: 12px 12px;
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	position: relative;
+	content: "";
+	top: 3px;
+	margin-left: 1px
+}
+
