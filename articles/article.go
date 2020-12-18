@@ -5,8 +5,6 @@ type Article struct {
 	ID             int
 	Lang           string
 	Title          string
-	HTML           string
-	HTMLShort      string
 	Markdown       string
 	OriginalURL    string
 	OriginalAuthor string

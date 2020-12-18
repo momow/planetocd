@@ -1,10 +1,8 @@
 images for social media
 social media pages
 post first social media posts
-external link icon
 translate es
 translate zh
 write about page x3
 test sharing from page works
-extract original url domain
 banniere a cote du logo
