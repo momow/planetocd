@@ -12,6 +12,7 @@ type pageMeta struct {
 	Lang                  string
 	Description           string
 	CanonicalURL          string
+	SocialURL             string
 	Title                 string
 	RootURL               string
 	SocialImage           string

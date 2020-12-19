@@ -1,8 +1,35 @@
 images for social media
 social media pages
 post first social media posts
-translate es
 translate zh
 write about page x3
 test sharing from page works
 banniere a cote du logo
+ensure GA works
+pingdom
+better share
+
+        function e(e, t, n) {
+            window.open(e, t, n) || (window.location.href = e);
+        }
+        function t(e, t, n) {
+            (n = "undefined" != typeof n ? n : "1"), (t += "=" + n);
+            var i = e.indexOf("?"),
+                o = e.indexOf("#");
+            return -1 == i ? (-1 == o ? e + "?" + t : e.substring(0, o) + "?" + t + e.substring(o)) : -1 == o ? e + "&" + t : e.substring(0, o) + "&" + t + e.substring(o);
+        }
+        return {
+            twitter: function (n, i, o, a) {
+                i = t(i, "stw", a);
+                var r = 257;
+                o.length > r && (o = o.substring(0, r - 3) + "..."),
+                    n.click(function () {
+                        e("https://twitter.com/share?url=" + encodeURIComponent(i) + "&ref=twitbtn&text=" + encodeURIComponent(o), "sharetwitter", "toolbar=1,status=1,resizable=1,scrollbars=1,width=800,height=526");
+                    });
+            },
+            facebook: function (n, i, o, a) {
+                (i = t(i, "sfb", a)),
+                    n.click(function () {
+                        e("https://www.facebook.com/sharer.php?u=" + encodeURIComponent(i) + "&ref=fbshare&t=" + encodeURIComponent(o), "sharefacebook", "toolbar=1,status=1,resizable=1,scrollbars=1,width=626,height=436");
+                    });
+            },

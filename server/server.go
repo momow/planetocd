@@ -115,6 +115,12 @@ func getPage(w http.ResponseWriter, r *http.Request, canonicalURL *url.URL, titl
 		panic(err)
 	}
 
+	socialURL := *canonicalURL
+	fmt.Printf("%v\n", socialURL.Host[:9])
+	if socialURL.Host[:9] == "localhost" {
+		socialURL.Host = "planetocd.org"
+	}
+
 	return &page{
 		Constants: Constants,
 		Meta: &pageMeta{
@@ -122,6 +128,7 @@ func getPage(w http.ResponseWriter, r *http.Request, canonicalURL *url.URL, titl
 			Title:                 title,
 			Description:           description,
 			CanonicalURL:          canonicalURL.String(),
+			SocialURL:             socialURL.String(),
 			RootURL:               getRootURL(lang).String(),
 			SocialImage:           imageURL.String() + "images/logo_social.png", // TODO: article image
 			EnableGoogleAnalytics: !isLocalEnvironment,

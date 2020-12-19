@@ -20,14 +20,14 @@
     <section>{{ .HTML }}</section>
 
     <section style="text-align: right">
-        <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ $.Meta.CanonicalURL }}&layout=button&size=large&width=73&height=28"
-                width="73" height="28" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media">
+        <iframe src="https://www.facebook.com/plugins/share_button.php?href={{ $.Meta.SocialURL }}&layout=button&size=large&width=112&height=28"
+                width="112" height="28" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
         </iframe>
         <a href="https://twitter.com/share?ref_src=twsrc%5Etfw"
            class="twitter-share-button"
            data-size="large"
            data-text="{{ .Title }}"
-           data-url="{{ .URL }}"
+           data-url="{{ $.Meta.SocialURL }}"
            data-via="{{ $.Constants.TwitterHandle }}"
            data-lang="{{ .Lang }}"
            data-dnt="true"
